@@ -1,5 +1,5 @@
 #!/bin/bash
-
+resize -s 40 100  # Set rows to 40 and columns to 100
 # Set color variables
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
@@ -7,6 +7,13 @@ NC='\033[0m' # No Color
 # Global variable for the typing message
 typing_message="Update Notes: Special Encryptions added for RIOT Game Accounts!"
 
+# Function to set the terminal size
+set_terminal_size() {
+    # Set the desired size (rows and columns)
+    local rows=40
+    local cols=100
+    printf '\e[8;%d;%dt' "$rows" "$cols"
+}
 # Function to display the ASCII art header
 print_header() {
     echo -e "${GREEN}"
@@ -25,39 +32,29 @@ print_header() {
     echo "  | |       |___/                                                      | |  "
     echo "__| |__________________________________________________________________| |__"
     echo "__   __________________________________________________________________   __"
-    echo "  | |                                                                  | |  "
     echo -e "${NC}"
     echo -e "\e[1m                  ENCRYPTED.SH by avoe - Simple Key Manager\e[0m"
     echo -e "${GREEN}"
     echo "============================================================================"
     echo -e "${NC}"
 }
+
 # Function to simulate typing (infinite loop)
 infinite_typing() {
     local message_length=${#typing_message}
     local current_pos=0
 
     while true; do
-        # Move the cursor back to the position of the typing message
-        echo -ne "\033[0G"  # Move to the beginning of the line
-        # Display the typing message starting from the current position
-        echo -ne "  | |  ${typing_message:current_pos:$((message_length - current_pos))} | |  "
-        echo -ne "  | |  ${typing_message:0:current_pos} | |  "  # Wrap around
+        # Move the cursor back to the top line for the banner
+        echo -ne "\033[0;0H"  # Move to the top left corner
+        # Display the typing message starting from the current position in a single line
+        # echo -ne "  | |  ${typing_message:current_pos:$((message_length - current_pos))} | |  "
+        echo -ne "  | |  ${typing_message:0:current_pos} | |"
 
         current_pos=$(( (current_pos + 1) % (message_length + 1) ))  # Increment and wrap
-        sleep 0.2  # Adjust delay for typing speed
+        sleep 0.05  # Adjust delay for typing speed
     done
 }
-
-# Function to simulate typing
-# type_text() {
-#     local text="$1"
-#     for (( i=0; i<${#text}; i++ )); do
-#         echo -e -n "${text:i:1}"
-#         sleep 0.1  # Adjust delay for typing speed
-#     done
-#     echo
-# }
 
 const_menu_up() {
     echo "_____________________________________"
@@ -66,9 +63,6 @@ const_menu_up() {
     echo "| 2 | Log in to existing encryption |"
     echo "| 3 | View existing encryptions     |"
 }
-# menu_main_new_enc() {
-    
-# }
 const_menu_bottom() {
     echo "_____________________________________"
     echo "| 7 | Help                          |"
@@ -80,14 +74,16 @@ state_keypress_main() {
     read -n 1 -s key  # Wait for the user to press a key (without showing it)
     echo
 
-        if [[ $key == "0" ]]; then
-            echo -e "\nExiting the script. Goodbye!"
-            exit 0
-        fi
+    if [[ $key == "0" ]]; then
+        echo -e "\nExiting the script. Goodbye!"
+        exit 0
+    fi
 }
-print_header 
+set_terminal_size
+# Start the typing animation in the background
 infinite_typing &
 
+# Main loop
 while true; do 
     clear
     print_header
