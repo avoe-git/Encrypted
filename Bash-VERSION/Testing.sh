@@ -49,10 +49,10 @@ infinite_typing() {
         echo -ne "\033[0;0H"  # Move to the top left corner
         # Display the typing message starting from the current position in a single line
         # echo -ne "  | |  ${typing_message:current_pos:$((message_length - current_pos))} | |  "
-        echo -ne "  | |  ${typing_message:0:current_pos} | |"
+        echo -ne "  | |  ${typing_message:0:current_pos}  "
 
         current_pos=$(( (current_pos + 1) % (message_length + 1) ))  # Increment and wrap
-        sleep 0.05  # Adjust delay for typing speed
+        sleep 0.1  # Adjust delay for typing speed
     done
 }
 
